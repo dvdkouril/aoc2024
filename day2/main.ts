@@ -10,11 +10,6 @@ for (const line of inputLong.split("\n")) {
 }
 console.log(numbers);
 
-// for (const numLine of numbers) {
-// 	const lineRes = numLine.reduce((prev, val) => prev - val, 0);
-// 	console.log(lineRes);
-// }
-
 let numOfSafeLines = 0;
 for (const numLine of numbers) {
 	const onlyDecr = numLine.every((el, i) =>
@@ -35,3 +30,73 @@ for (const numLine of numbers) {
 	}
 }
 console.log(`safe lines: ${numOfSafeLines}`);
+
+// function checkAll(val: number, prev: number): boolean {
+// 	return (
+// 		(checkIsDecr(val, prev) || checkIsIncr(val, prev)) &&
+// 		checkDiffLessThan3(val, prev)
+// 	);
+// }
+
+function checkIsDecr(val: number, prev: number): boolean {
+	return val - prev < 0;
+}
+
+function checkIsIncr(val: number, prev: number): boolean {
+	return val - prev > 0;
+}
+
+function checkDiffLessThan3(val: number, prev: number): boolean {
+	const diff = Math.abs(val - prev);
+	return diff <= 3 && diff >= 1;
+}
+
+function runChecks(arr: number[]): boolean {
+	let allDecr = true;
+	let allIncr = true;
+	let allDiffOK = true;
+	for (const [i, num] of arr.entries()) {
+		if (i === 0) continue;
+		allDecr = checkIsDecr(num, arr[i - 1]) && allDecr;
+		allIncr = checkIsIncr(num, arr[i - 1]) && allIncr;
+		allDiffOK = checkDiffLessThan3(num, arr[i - 1]) && allDiffOK;
+	}
+	const safe = (allDecr || allIncr) && allDiffOK;
+	return safe;
+}
+
+console.log("part2");
+let numOfActuallySafe = 0;
+for (const numLine of numbers) {
+	// let allDecr = true;
+	// let allIncr = true;
+	// let allDiffOK = true;
+	// for (const [i, num] of numLine.entries()) {
+	// 	if (i === 0) continue;
+	// 	allDecr = checkIsDecr(num, numLine[i - 1]) && allDecr;
+	// 	allIncr = checkIsIncr(num, numLine[i - 1]) && allIncr;
+	// 	allDiffOK = checkDiffLessThan3(num, numLine[i - 1]) && allDiffOK;
+	// }
+	// const safe = (allDecr || allIncr) && allDiffOK;
+	const safe = runChecks(numLine);
+
+	console.log(numLine);
+	// console.log(`safe: ${safe} (${allDecr} ${allIncr} ${allDiffOK})`);
+	console.log(`safe: ${safe}`);
+
+	let actuallySafe = false;
+	for (const [i, _] of numLine.entries()) {
+		const arrayWithout = numLine.toSpliced(i, 1);
+		// console.log(arrayWithout);
+		const nowSafe = runChecks(arrayWithout);
+		if (nowSafe) {
+			actuallySafe = true;
+			break;
+		}
+	}
+	console.log(`actually safe: ${actuallySafe}`);
+	if (actuallySafe) {
+		numOfActuallySafe += 1;
+	}
+}
+console.log(`num of actually safe: ${numOfActuallySafe}`);
