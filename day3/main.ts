@@ -4,11 +4,31 @@ console.log("day 3");
 const mulOp = "mul(";
 const mulOccurences: string[] = [];
 let summedRes = 0;
-const multiplicationStrings: string[] = [];
 let numOfMulFound = 0;
+const doOp = "do()";
+const dontOp = "don't()";
+let reading = true;
 for (const input of inputLong2) {
 	for (let i = 0; i < input.length; i++) {
 		const charWindow = input.slice(i, i + 4);
+		const charWindowLonger = input.slice(i, i + 7);
+
+		if (charWindow === doOp) {
+			reading = true;
+			console.log("found do()");
+			continue;
+		}
+
+		if (charWindowLonger === dontOp) {
+			reading = false;
+			console.log("found don't()");
+			continue;
+		}
+
+		if (!reading) {
+			continue;
+		}
+
 		if (charWindow === mulOp) {
 			numOfMulFound += 1;
 			const searchWindow = 10;
